@@ -41,7 +41,7 @@ pipeline {
     // If not set, the files will be associated with the default build name and build number (i.e the
     // the Jenkins job name and number).
                     buildName: 'my_own_project',
-                    buildNumber: '01',
+         \           buildNumber: '01',
                     // Optional - Only if this build is associated with a project in Artifactory, set the project key as follows.
                     project: 'my_own_project'
 )
@@ -92,23 +92,24 @@ pipeline {
 		          sh 'docker login -u surya123789 -p aDm1n@123'
 			}
 	}
-	    stage('Dockerpush') {
-			  agent { label 'Docker' }
-          steps {
-				     sh 'docker push surya123789/my_own_project:latest'
+	stage('Dockerpush') {
+	    agent { label 'Docker' }
+                      steps {
+		          sh 'docker push surya123789/my_own_project:latest'
 		             	}
 	}
-	   stage('pull image') {
-			 agent { label 'Docker' }
-            steps {
-				      sh 'docker pull surya123789/my_own_project:latest'
-			                  }
-	    	}
-	stage('Deploy App') {
-		agent { label 'Build' }
-           steps {
-              script {
-                kubernetesDeploy(configs: "deploy.yml", kubeconfigId: "kubernetes", enableConfigSubstitution: true)
+	stage('Build Image'){
+       		 openshiftBuild(buildConfig: 'javademo', showBuildLogs: 'true')
+  	  }
+
+    	 stage('Test Container Availability'){
+       		 openshiftVerifyBuild(buildConfig: 'javademo')
+    }
+
+    	   stage('Deploy Application'){
+        	 openshiftDeploy(deploymentConfig: 'javademo')
+    }
+	
         }
       }
     }

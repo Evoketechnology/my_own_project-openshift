@@ -99,15 +99,15 @@ pipeline {
 		             	}
 	}
 	stage('Build Image'){
-       		 openshiftBuild(buildConfig: 'javademo', showBuildLogs: 'true')
+       		 openshiftBuild(buildConfig: 'gamutkart', showBuildLogs: 'true')
   	  }
 
-    	 stage('Test Container Availability'){
-       		 openshiftVerifyBuild(buildConfig: 'javademo')
+    	stage('Test Container Availability'){
+       		 openshiftVerifyBuild(buildConfig: 'gamutkart')
     }
 
-    	   stage('Deploy Application'){
-        	 openshiftDeploy(deploymentConfig: 'javademo')
+    	stage('Deploy Application'){
+        	 openshiftDeploy(deploymentConfig: 'gamutkart')
     }
 	
         }
